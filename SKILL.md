@@ -1,6 +1,6 @@
 ---
-name: skill-manager
-description: Install, update, list, and remove Claude Code and OpenCode skills. Supports GitHub repositories (user/repo), GitHub subdirectory URLs, and .skill zip files. Use when user wants to install, add, download, update, sync, list, remove, uninstall, or delete skills.
+name: managing-skills
+description: Install, update, list, and remove Claude Code and OpenCode skills. Supports GitHub repositories (user/repo), GitHub subdirectory URLs, and .skill zip files. Can set up interoperability between Claude Code and OpenCode via symlinks. Use when user wants to install, add, download, update, sync, list, remove, uninstall, delete skills, or share skills between Claude Code and OpenCode.
 ---
 
 <objective>
@@ -43,13 +43,6 @@ A dedicated GitHub repo containing a skill.
 - Shorthand: `user/repo`
 - Full URL: `https://github.com/user/repo`
 - May contain `/tree/<branch>` but NO path after the branch
-
-**URL Resolution:**
-Use `scripts/resolve_url.py` to normalize GitHub references:
-```bash
-python scripts/resolve_url.py "user/repo"
-# Output: https://github.com/user/repo repo
-```
 
 **Install (User - Claude Code):**
 ```bash
@@ -224,6 +217,50 @@ fi
 ```
 </operation>
 
+<operation name="interop">
+Make skills available to both Claude Code and OpenCode using symlinks.
+
+**User-level (share skills globally):**
+
+First, check which tool already has skills:
+```bash
+ls -la ~/.claude/skills 2>/dev/null
+ls -la ~/.config/opencode/skill 2>/dev/null
+```
+
+If Claude Code has skills, make them available to OpenCode:
+```bash
+mkdir -p ~/.config/opencode
+ln -s ~/.claude/skills ~/.config/opencode/skill
+```
+
+If OpenCode has skills, make them available to Claude Code:
+```bash
+mkdir -p ~/.claude
+ln -s ~/.config/opencode/skill ~/.claude/skills
+```
+
+**Project-level (share skills in a project):**
+
+If Claude Code has project skills, make them available to OpenCode:
+```bash
+mkdir -p .opencode
+ln -s ../.claude/skills .opencode/skill
+```
+
+If OpenCode has project skills, make them available to Claude Code:
+```bash
+mkdir -p .claude
+ln -s ../.opencode/skill .claude/skills
+```
+
+**Important considerations:**
+- Only ONE directory should contain actual files; the other should be a symlink
+- If both directories already exist with different skills, ask user which to keep as primary
+- Symlinks should be committed to git for project-level interop (use relative paths)
+- After creating symlinks, verify with `ls -la` that the link points correctly
+</operation>
+
 </operations>
 
 <error_handling>
@@ -250,8 +287,8 @@ fi
 **Symptom:** Cannot parse GitHub URL
 
 **Resolution:**
-1. Use `scripts/resolve_url.py` to validate and normalize
-2. Check URL format matches expected patterns
+1. Check URL format matches expected patterns (user/repo or full GitHub URL)
+2. Normalize shorthand `user/repo` to `https://github.com/user/repo`
 3. Ask user to verify the URL
 </error>
 
