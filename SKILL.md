@@ -1,0 +1,113 @@
+---
+name: managing-skills
+description: "Install, find, update, and manage agent skills. Use when the user wants to add a new skill, search for skills that do something, check if skills are up to date, or update existing skills. Triggers on: install skill, add skill, get skill, find skill, search skill, update skill, check skills, list skills."
+---
+
+<objective>
+Manage agent skills via the `npx skills` CLI. Handle installing skills from GitHub repos, searching for available skills, checking for updates, and updating installed skills.
+</objective>
+
+<quick_start>
+Determine which operation the user wants (install, find, update, check) and run the appropriate `npx skills` command with `--yes` to skip confirmations. Default to project-level install and the current agent type unless told otherwise.
+</quick_start>
+
+<context>
+<agent_type>
+Detect the agent you are running as. Map to the correct `--agent` flag value:
+- Claude Code → `claude-code`
+- Codex → `codex`
+- Copilot → `copilot`
+
+If unsure, check for config directories: `.claude/`, `.codex/`, `.github/copilot/`, etc.
+Only include additional agent types if the user explicitly requests it (e.g., "install for all agents" or "also install for codex").
+</agent_type>
+
+<install_scope>
+- **Project** (default): Installs to `./<agent>/skills/` in the current project.
+- **Global** (`-g`): Installs to `~/<agent>/skills/`. Only use when the user says "global", "globally", or "for all projects".
+</install_scope>
+</context>
+
+<operations>
+
+<operation name="install">
+<trigger>User says: install, add, get, set up a skill</trigger>
+<steps>
+1. Identify the skill source. Accepts: `owner/repo`, full GitHub URL, GitLab URL, or local path.
+2. Determine scope: project (default) or global (`-g`).
+3. Determine agent type(s) to target.
+4. Run:
+```bash
+npx --yes skills add {source} --yes --agent {agent-type}
+```
+Add `-g` if global. Add multiple `--agent` flags if targeting multiple agents.
+</steps>
+<examples>
+"Install the vercel-labs/skills skill" →
+`npx --yes skills add vercel-labs/skills --yes --agent claude-code`
+
+"Globally install foo/bar for all agents" →
+`npx --yes skills add foo/bar --yes -g --all`
+</examples>
+</operation>
+
+<operation name="find">
+<trigger>User says: find, search, discover, look for, browse skills</trigger>
+<steps>
+1. If user gave a keyword, pass it directly.
+2. Run:
+```bash
+npx --yes skills find {keyword}
+```
+3. Present results to the user. If they pick one, follow the install operation.
+</steps>
+</operation>
+
+<operation name="check">
+<trigger>User says: check for updates, are my skills up to date</trigger>
+<steps>
+Run:
+```bash
+npx --yes skills check
+```
+Report which skills have updates available. Offer to update if any are found.
+</steps>
+</operation>
+
+<operation name="update">
+<trigger>User says: update skills, upgrade skills</trigger>
+<steps>
+Run:
+```bash
+npx --yes skills update
+```
+Report what was updated.
+</steps>
+</operation>
+
+<operation name="list">
+<trigger>User says: list skills, show installed skills, what skills do I have</trigger>
+<steps>
+Run:
+```bash
+npx --yes skills add --list
+```
+</steps>
+</operation>
+
+</operations>
+
+<guidelines>
+- Always use `--yes` flag to skip confirmation prompts.
+- Always use `npx --yes skills` (the first `--yes` auto-installs the package without prompting).
+- Default to project scope unless the user explicitly says global.
+- Default to the current agent type only. Add others only if the user asks.
+- If a command fails, show the error output and suggest fixes (e.g., check the source URL, network).
+- After installing, confirm success and mention where the skill was installed.
+</guidelines>
+
+<success_criteria>
+- The requested skill operation completed successfully.
+- Output was shown to the user confirming what happened.
+- Scope and agent targeting matched user intent (project/global, correct agent).
+</success_criteria>
