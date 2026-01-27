@@ -8,7 +8,16 @@ Manage agent skills via the `npx skills` CLI. Handle installing skills from GitH
 </objective>
 
 <quick_start>
-Determine which operation the user wants (install, find, update, check) and run the appropriate `npx skills` command with `--yes` to skip confirmations. Default to project-level install and the current agent type unless told otherwise.
+Determine which operation the user wants and run the appropriate command. Always include `--yes` to skip confirmations. Default to project-level install and the current agent type unless told otherwise.
+
+Primary commands:
+```
+npx skills add {source} --yes --agent {agent-type}
+npx skills find {keyword} --yes
+npx skills check --yes
+npx skills update --yes
+npx skills add --list --yes
+```
 </quick_start>
 
 <context>
@@ -58,22 +67,22 @@ Only include additional agent types if the user explicitly requests it (e.g., "i
 3. Determine agent type(s) to target.
 4. Run:
 ```bash
-npx --yes skills add {source} --yes --agent {agent-type}
+npx skills add {source} --yes --agent {agent-type}
 ```
 Add `-g` if global. Add multiple `--agent` flags if targeting multiple agents.
 </steps>
 <examples>
 "Install the vercel-labs/skills skill" →
-`npx --yes skills add vercel-labs/skills --yes --agent claude-code`
+`npx skills add vercel-labs/skills --yes --agent claude-code`
 
 "Install just the managing-skills skill from that repo" →
-`npx --yes skills add vercel-labs/skills --yes -s managing-skills --agent claude-code`
+`npx skills add vercel-labs/skills --yes -s managing-skills --agent claude-code`
 
 "Install this skill: github.com/owner/repo/tree/main/skills/foo" →
-`npx --yes skills add https://github.com/owner/repo/tree/main/skills/foo --yes --agent claude-code`
+`npx skills add https://github.com/owner/repo/tree/main/skills/foo --yes --agent claude-code`
 
 "Globally install foo/bar for all agents" →
-`npx --yes skills add foo/bar --yes -g --all`
+`npx skills add foo/bar --yes -g --all`
 </examples>
 </operation>
 
@@ -83,7 +92,7 @@ Add `-g` if global. Add multiple `--agent` flags if targeting multiple agents.
 1. If user gave a keyword, pass it directly.
 2. Run:
 ```bash
-npx --yes skills find {keyword}
+npx skills find {keyword} --yes
 ```
 3. Present results to the user. If they pick one, follow the install operation.
 </steps>
@@ -94,7 +103,7 @@ npx --yes skills find {keyword}
 <steps>
 Run:
 ```bash
-npx --yes skills check
+npx skills check --yes
 ```
 Report which skills have updates available. Offer to update if any are found.
 </steps>
@@ -105,7 +114,7 @@ Report which skills have updates available. Offer to update if any are found.
 <steps>
 Run:
 ```bash
-npx --yes skills update
+npx skills update --yes
 ```
 Report what was updated.
 </steps>
@@ -116,7 +125,7 @@ Report what was updated.
 <steps>
 Run:
 ```bash
-npx --yes skills add --list
+npx skills add --list --yes
 ```
 </steps>
 </operation>
@@ -124,8 +133,7 @@ npx --yes skills add --list
 </operations>
 
 <guidelines>
-- Always use `--yes` flag to skip confirmation prompts.
-- Always use `npx --yes skills` (the first `--yes` auto-installs the package without prompting).
+- Always use `--yes` to skip confirmation prompts.
 - Default to project scope unless the user explicitly says global.
 - Default to the current agent type only. Add others only if the user asks.
 - If a command fails, show the error output and suggest fixes (e.g., check the source URL, network).
