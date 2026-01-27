@@ -14,11 +14,27 @@ Determine which operation the user wants (install, find, update, check) and run 
 <context>
 <agent_type>
 Detect the agent you are running as. Map to the correct `--agent` flag value:
-- Claude Code → `claude-code`
-- Codex → `codex`
-- Copilot → `copilot`
 
-If unsure, check for config directories: `.claude/`, `.codex/`, `.github/copilot/`, etc.
+| Agent | Flag value |
+|-------|-----------|
+| Amp | `amp` |
+| Claude Code | `claude-code` |
+| Cline | `cline` |
+| Codex | `codex` |
+| Continue | `continue` |
+| Cursor | `cursor` |
+| Gemini CLI | `gemini-cli` |
+| GitHub Copilot | `github-copilot` |
+| Goose | `goose` |
+| Kilo Code | `kilo` |
+| Kiro CLI | `kiro-cli` |
+| OpenCode | `opencode` |
+| Qwen Code | `qwen-code` |
+| Roo Code | `roo` |
+| Trae | `trae` |
+| Windsurf | `windsurf` |
+
+If unsure, check for config directories (e.g., `.claude/`, `.codex/`, `.cursor/`).
 Only include additional agent types if the user explicitly requests it (e.g., "install for all agents" or "also install for codex").
 </agent_type>
 
@@ -33,7 +49,11 @@ Only include additional agent types if the user explicitly requests it (e.g., "i
 <operation name="install">
 <trigger>User says: install, add, get, set up a skill</trigger>
 <steps>
-1. Identify the skill source. Accepts: `owner/repo`, full GitHub URL, GitLab URL, or local path.
+1. Identify the skill source. Accepts:
+   - `owner/repo` — installs all skills from the repo
+   - Full GitHub/GitLab URL to a repo, directory, or SKILL.md file (e.g., `https://github.com/owner/repo/tree/main/skills/foo`)
+   - Local filesystem path
+   - Use `-s skill-name` to cherry-pick a specific skill by name from a multi-skill repo
 2. Determine scope: project (default) or global (`-g`).
 3. Determine agent type(s) to target.
 4. Run:
@@ -45,6 +65,12 @@ Add `-g` if global. Add multiple `--agent` flags if targeting multiple agents.
 <examples>
 "Install the vercel-labs/skills skill" →
 `npx --yes skills add vercel-labs/skills --yes --agent claude-code`
+
+"Install just the managing-skills skill from that repo" →
+`npx --yes skills add vercel-labs/skills --yes -s managing-skills --agent claude-code`
+
+"Install this skill: github.com/owner/repo/tree/main/skills/foo" →
+`npx --yes skills add https://github.com/owner/repo/tree/main/skills/foo --yes --agent claude-code`
 
 "Globally install foo/bar for all agents" →
 `npx --yes skills add foo/bar --yes -g --all`
