@@ -17,5 +17,5 @@ Defaults to project-level install targeting the current agent type. Supports glo
 ## Install
 
 ```bash
-npx skills add anthropics/managing-skills
+npx skills add mikekelly/managing-skills --yes -g --all
 ```
